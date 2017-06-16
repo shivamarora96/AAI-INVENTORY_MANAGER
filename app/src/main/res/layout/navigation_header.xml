@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-
         android:padding="12dp"
         app:mrl_rippleColor="#ffffff"
         app:mrl_rippleRoundedCorners="500dp"
