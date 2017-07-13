@@ -14,12 +14,25 @@ import android.view.MenuItem;
 import com.aai.inventorymanagement.Fragments.AddNewItem;
 import com.aai.inventorymanagement.Fragments.DeleteItem;
 import com.aai.inventorymanagement.Fragments.Home;
+import com.aai.inventorymanagement.Fragments.ItemAllocated;
 import com.aai.inventorymanagement.Fragments.Update;
 import com.aai.inventorymanagement.Fragments.Vview;
+import com.aai.inventorymanagement.Model.AddRequest;
+import com.aai.inventorymanagement.Model.AddResponse;
+import com.aai.inventorymanagement.Model.Item;
+import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
-import com.aai.inventorymanagement.Utilities.Helper;
+import com.aai.inventorymanagement.Utilities.AlertHelper;
+import com.aai.inventorymanagement.Utilities.Network.RetrofitClient;
+import com.aai.inventorymanagement.Utilities.Network.RetrofitService;
+import com.aai.inventorymanagement.Utilities.SharedPreferenceManager;
 
-public class HomeActivity extends AppCompatActivity implements Home.Listner {
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class HomeActivity extends AppCompatActivity implements Home.Listner , AddNewItem.Listner {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -36,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner {
         mNavigationView = (NavigationView)findViewById(R.id.navigaitonVIew);
         toolbar = (android.support.v7.widget.Toolbar)findViewById(R.id.homeactivity_toolbar);
         setSupportActionBar(toolbar);
+
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(HomeActivity.this , mDrawerLayout , toolbar ,R.string.navigation_drawer_open , R.string.navigation_drawer_close ) ;
         mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -55,7 +69,6 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
-
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -74,32 +87,63 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner {
     @Override
     public void listen(int v) {
 
-        Helper helper = new Helper();
+        SharedPreferenceManager manager = new SharedPreferenceManager(HomeActivity.this);
+        int userType = manager.getInt(Constants.USERTYPE_KEY , Constants.USERTYPE_GENERAL);
+
+        AlertHelper alertHelper = new AlertHelper();
+        alertHelper.createErrorAlert(HomeActivity.this, "ACCESS DENIED !! ", new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.hide();
+            }
+        });
+
+        AlertHelper helper = new AlertHelper();
         helper.createProgressAlert(HomeActivity.this , "LOADING");
         //Add item fragment
         if(v == 1){
             helper.showAlert();
-            AddNewItem addNewItem = new AddNewItem();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container, addNewItem);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+
+            if (userType == Constants.USERTYPE_ADMIN) {
+                AddNewItem addNewItem = new AddNewItem();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, addNewItem);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+            else {
+                alertHelper.showAlert();
+            }
         }
          if(v == 2){
-            helper.showAlert();
-            DeleteItem fragment = new DeleteItem();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container, fragment , null);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+
+            if (userType == Constants.USERTYPE_ADMIN) {
+                helper.showAlert();
+                DeleteItem fragment = new DeleteItem();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment, null);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+             else {
+                alertHelper.showAlert();
+            }
         }
          if(v == 3){
             helper.showAlert();
-            Update fragment = new Update();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container, fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+
+
+             if (userType == Constants.USERTYPE_ADMIN) {
+                 Update fragment = new Update();
+                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                 fragmentTransaction.replace(R.id.container, fragment);
+                 fragmentTransaction.addToBackStack(null);
+                 fragmentTransaction.commit();
+             }
+             else {
+
+                 alertHelper.showAlert();
+             }
         }
         if(v == 4){
             helper.showAlert();
@@ -111,6 +155,89 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner {
         }
         helper.hideAlert();
 
+        if (v == 5){
+            ItemAllocated fragment = new ItemAllocated();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.container, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+        }
+
+        if (v == 6){
+            Vview fragment = new Vview();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.container, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+        }
+
+    }
+
+
+    @Override
+    public boolean addNewEntryInDb(final String name, int q) {
+        Item item = new Item();
+
+        final AlertHelper alertHelper = new AlertHelper();
+        alertHelper.createProgressAlert(HomeActivity.this , "Please Wait ...");
+        alertHelper.showAlert();
+
+        RetrofitService service = RetrofitClient.getClient().create(RetrofitService.class);
+        Call<AddResponse> responseCall = service.addItem(new AddRequest(name , q));
+        responseCall.enqueue(new Callback<AddResponse>() {
+            @Override
+            public void onResponse(Call<AddResponse> call, Response<AddResponse> response) {
+                alertHelper.hideAlert();
+
+                if (response.body().getCreated().equals(Constants.ADD_RESPONSE_SUCCESS)){
+                    final AlertHelper alertHelper = new AlertHelper();
+                    alertHelper.createSuccessAlert(HomeActivity.this, name.concat(" added to Inventory"), new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            alertHelper.hideAlert();
+                            Fragment home = new Home();
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.container, home );
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+
+                        }
+                    });
+                    alertHelper.showAlert();
+                }
+             else {
+                    AlertHelper error = new AlertHelper();
+                    error.createErrorAlert(HomeActivity.this, response.body().getCreated(), new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
+                    error.showAlert();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddResponse> call, Throwable t) {
+
+                alertHelper.hideAlert();
+
+                AlertHelper error = new AlertHelper();
+                error.createErrorAlert(HomeActivity.this, "NETWORK ERROR", new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                });
+                error.showAlert();
+
+
+            }
+        });
+
+        return true;
     }
 }
 

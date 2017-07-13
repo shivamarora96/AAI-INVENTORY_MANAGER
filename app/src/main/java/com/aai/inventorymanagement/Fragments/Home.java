@@ -17,7 +17,7 @@ import java.util.List;
 
 
 public class Home extends Fragment {
-    public LinearLayout mAdditem , mDeleteItem , mUpdateStock , mViewStock  ;
+    public LinearLayout mAdditem , mDeleteItem , mUpdateStock , mViewStock, mItemReq, mItemAllocated ;
     Listner mListner ;
 
 
@@ -51,6 +51,10 @@ public class Home extends Fragment {
         mDeleteItem = (LinearLayout)view.findViewById(R.id.deleteitem);
         mUpdateStock = (LinearLayout)view.findViewById(R.id.updatestock);
         mViewStock = (LinearLayout)view.findViewById(R.id.viewstock);
+        mItemAllocated = (LinearLayout)view.findViewById(R.id.itemAllocated);
+        mItemReq = (LinearLayout)view.findViewById(R.id.itemRequested);
+
+
 
         mAdditem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +81,20 @@ public class Home extends Fragment {
             @Override
             public void onClick(View v) {
                 mListner.listen(4);
+            }
+        });
+
+        mItemAllocated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListner.listen(5);
+            }
+        });
+
+        mItemReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListner.listen(6);
             }
         });
 

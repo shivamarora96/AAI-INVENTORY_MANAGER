@@ -5,11 +5,10 @@
     android:background="#FFCDD2"
     android:orientation="vertical"
     android:padding="15dp"
-    android:id="@+id/deleteitem_ll"
-    tools:context="com.aai.inventorymanagement.Fragments.AddNewItem">
+    android:id="@+id/deleteitem_ll">
 
     <ListView
-        android:id="@+id/deleteitem_lv"
+        android:id="@+id/view_lv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

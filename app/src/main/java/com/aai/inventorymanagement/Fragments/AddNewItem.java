@@ -1,66 +1,108 @@
 package com.aai.inventorymanagement.Fragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import com.aai.inventorymanagement.Model.Item;
 import com.aai.inventorymanagement.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddNewItem#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AddNewItem extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public TextInputEditText productId , batchId , productName ;
+    public ImageButton increaseQuantity , decreaseQuantitiy;
+    public TextView quantityTV ;
+    Listner listner;
 
+    public Button save;
+    public int quantity = 0;
 
     public AddNewItem() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddNewItem.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddNewItem newInstance(String param1, String param2) {
-        AddNewItem fragment = new AddNewItem();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_new_item, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_add_new_item, container, false);
+//        productId = (TextInputEditText)view.findViewById(R.id.additem_serialID);
+//        batchId  = (TextInputEditText)view.findViewById(R.id.additem_bactchID);
+        productName  = (TextInputEditText)view.findViewById(R.id.additem_name);
+        increaseQuantity = (ImageButton)view.findViewById(R.id.additem_addButton);
+        decreaseQuantitiy = (ImageButton)view.findViewById(R.id.additem_subtratButton);
+        quantityTV = (TextView) view.findViewById(R.id.additem_quntity);
+        save = (Button)view.findViewById(R.id.additem_saveButton);
+
+
+        return view;
     }
+
+    @Override
+    public void onAttach(Activity context) {
+        super.onAttach(context);
+
+        try {
+            listner = (AddNewItem.Listner) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        increaseQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quantity++;
+                quantityTV.setText(quantity + "");
+            }
+        });
+
+        decreaseQuantitiy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (quantity>0) {
+                    quantity--;
+                    quantityTV.setText(quantity + "");
+                }
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String name ;
+                name = productName.getText().toString().toUpperCase();
+                listner.addNewEntryInDb(name , quantity);
+            }
+        });
+
+    }
+
+    public interface Listner{
+        public boolean addNewEntryInDb(String name , int q);
+    };
 
 }

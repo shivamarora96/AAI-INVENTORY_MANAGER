@@ -6,7 +6,7 @@ import android.graphics.Color;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
-public class Helper {
+public class AlertHelper {
 
 private SweetAlertDialog sweetAlertDialog;
 
@@ -19,36 +19,24 @@ private SweetAlertDialog sweetAlertDialog;
     }
 
     //Create Success Dialogue Progressbar ...
-    public void createSuccessAlert(Context context , String message){
+    public void createSuccessAlert(Context context , String message , SweetAlertDialog.OnSweetClickListener listener){
         sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#1A237E"));
         sweetAlertDialog.setTitleText("SUCCESS");
         sweetAlertDialog.setContentText("\n".concat(message));
-        sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                if(sweetAlertDialog.isShowing())
-                    sweetAlertDialog.hide();
-            }
-        });
+        sweetAlertDialog.setConfirmClickListener(listener);
         sweetAlertDialog.setConfirmText("OK");
 
     }
 
     //Create Error Dialogue Progressbar ...
 
-    public void createErrorAlert(Context context, String message){
+    public void createErrorAlert(Context context, String message , SweetAlertDialog.OnSweetClickListener listener){
         sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE);
         sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#1A237E"));
         sweetAlertDialog.setTitleText("FAILED ");
         sweetAlertDialog.setContentText("\n".concat(message));
-        sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                if(sweetAlertDialog.isShowing())
-                    sweetAlertDialog.hide();
-            }
-        });
+        sweetAlertDialog.setConfirmClickListener(listener);
         sweetAlertDialog.setConfirmText("OK");
     }
 
@@ -69,4 +57,7 @@ private SweetAlertDialog sweetAlertDialog;
             sweetAlertDialog = null;
         }
     }
+
+
+
 }

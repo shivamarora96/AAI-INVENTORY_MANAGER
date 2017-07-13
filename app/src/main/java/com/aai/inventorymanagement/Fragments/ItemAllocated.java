@@ -1,7 +1,8 @@
 package com.aai.inventorymanagement.Fragments;
 
-
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 
 import com.aai.inventorymanagement.Adapter.ListviewcustomAdapter;
 import com.aai.inventorymanagement.Model.Item;
+import com.aai.inventorymanagement.Model.ItemAllocated_Response;
 import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
 import com.aai.inventorymanagement.Utilities.AlertHelper;
@@ -26,16 +28,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Update extends Fragment {
 
-    ListView listView ;
-    ListviewcustomAdapter adapter;
+public class ItemAllocated extends Fragment {
 
 
-    public Update() {
+    ListView listView;
+    ListviewcustomAdapter customAdapter;
+    ArrayList<Item> data;
+
+    public ItemAllocated() {
 
     }
 
@@ -43,12 +44,14 @@ public class Update extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_update, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_item_allocated, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
 
         final AlertHelper loading = new AlertHelper();
@@ -57,21 +60,26 @@ public class Update extends Fragment {
 
         final View currentView = view;
         RetrofitService service = RetrofitClient.getClient().create(RetrofitService.class);
-        Call<ArrayList<Item>> call = service.getListOfItem();
-        call.enqueue(new Callback<ArrayList<Item>>() {
+        Call<ArrayList<ItemAllocated_Response>> call = service.getAllocatedItem("sid@gmail.com");
+        call.enqueue(new Callback<ArrayList<ItemAllocated_Response>>() {
             @Override
-            public void onResponse(Call<ArrayList<Item>> call, Response<ArrayList<Item>> response) {
+            public void onResponse(Call<ArrayList<ItemAllocated_Response>> call, Response<ArrayList<ItemAllocated_Response>> response) {
                 Log.i("tag", "Success");
-                listView = (ListView)currentView.findViewById(R.id.update_lv);
-                adapter = new ListviewcustomAdapter(getActivity() , Constants.ACTION_UPDATE, response.body());
-                listView.setAdapter(adapter);
+                listView = (ListView) currentView.findViewById(R.id.itemAllocated_lv);
 
-
+                ArrayList<Item> data = new ArrayList<Item>();
+                for (int i =0 ; i<response.body().size() ; i++){
+                    ArrayList<ItemAllocated_Response> responses = response.body();
+                    Item item = new Item(responses.get(i).getName() , " " , 1 , responses.get(i).getPid());
+                    data.add(item);
+                }
+                customAdapter = new ListviewcustomAdapter(getActivity(), Constants.ACTION_ALLOCATED, data);
+                listView.setAdapter(customAdapter);
                 loading.hideAlert();
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Item>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<ItemAllocated_Response>> call, Throwable t) {
                 loading.hideAlert();
                 AlertHelper failed = new AlertHelper();
                 failed.createErrorAlert(getActivity(), "NEWTWORK ERROR !! ", new SweetAlertDialog.OnSweetClickListener() {
@@ -89,7 +97,7 @@ public class Update extends Fragment {
         });
 
 
+
     }
- }
 
-
+}

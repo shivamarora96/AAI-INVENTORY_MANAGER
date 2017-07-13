@@ -9,7 +9,7 @@
     tools:context="com.aai.inventorymanagement.Fragments.AddNewItem">
 
     <ListView
-        android:id="@+id/deleteitem_lv"
+        android:id="@+id/itemAllocated_lv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
