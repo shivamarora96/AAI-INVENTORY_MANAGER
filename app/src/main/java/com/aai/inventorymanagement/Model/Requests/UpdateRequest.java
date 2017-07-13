@@ -1,4 +1,4 @@
-package com.aai.inventorymanagement.Model;
+package com.aai.inventorymanagement.Model.Requests;
 
 import com.aai.inventorymanagement.Others.Constants;
 
@@ -15,6 +15,12 @@ public class UpdateRequest {
     public UpdateRequest(int bid, int quantity) {
         this.bid = bid;
         this.email = Constants.ADMIN_ID;
+        this.quantity = quantity;
+    }
+
+    public UpdateRequest(String email, int bid, int quantity) {
+        this.email = email;
+        this.bid = bid;
         this.quantity = quantity;
     }
 

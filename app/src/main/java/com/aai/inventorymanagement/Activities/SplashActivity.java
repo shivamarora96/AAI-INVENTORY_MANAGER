@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.aai.inventorymanagement.Model.Item;
 import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
 import com.aai.inventorymanagement.Utilities.SharedPreferenceManager;

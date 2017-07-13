@@ -1,8 +1,6 @@
 package com.aai.inventorymanagement.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.aai.inventorymanagement.Adapter.ListviewcustomAdapter;
-import com.aai.inventorymanagement.Model.Item;
-import com.aai.inventorymanagement.Model.ItemAllocated_Response;
+import com.aai.inventorymanagement.Model.Requests.Item;
+import com.aai.inventorymanagement.Model.Response.ItemAllocated_Response;
 import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
 import com.aai.inventorymanagement.Utilities.AlertHelper;
@@ -51,8 +49,6 @@ public class ItemAllocated extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
 
         final AlertHelper loading = new AlertHelper();
         loading.createProgressAlert(getActivity() , "Loading ...");

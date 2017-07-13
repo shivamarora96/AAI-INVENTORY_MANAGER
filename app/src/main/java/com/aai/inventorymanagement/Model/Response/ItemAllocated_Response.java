@@ -1,4 +1,4 @@
-package com.aai.inventorymanagement.Model;
+package com.aai.inventorymanagement.Model.Response;
 
 /**
  * Created by shivam on 13/7/17.

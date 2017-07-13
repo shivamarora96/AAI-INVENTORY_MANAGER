@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.aai.inventorymanagement.Adapter.ListviewcustomAdapter;
-import com.aai.inventorymanagement.Model.Item;
+import com.aai.inventorymanagement.Model.Requests.Item;
 import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
 import com.aai.inventorymanagement.Utilities.AlertHelper;

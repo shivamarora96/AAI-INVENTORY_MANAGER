@@ -56,6 +56,7 @@ public class Home extends Fragment {
 
 
 
+
         mAdditem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +98,8 @@ public class Home extends Fragment {
                 mListner.listen(6);
             }
         });
+
+
 
     }
 

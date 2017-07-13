@@ -34,6 +34,10 @@ public class Constants {
 
     public final static String UPDATE_RESPONSE_SUCCESS = "inventory updated";
     public final static String ADD_RESPONSE_SUCCESS = "objects created";
+    public final static String ITEMREQUEST_RESPONSE_SUCCESS = "items provided";
+
+    public final static String APPLINK = "https://1drv.ms/u/s!Ar-Bx7RovGGoiHe_6BLVjAyLRj-a";
+
 
 
 

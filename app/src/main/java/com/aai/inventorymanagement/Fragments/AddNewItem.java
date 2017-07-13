@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.aai.inventorymanagement.Model.Item;
 import com.aai.inventorymanagement.R;
 
 public class AddNewItem extends Fragment {

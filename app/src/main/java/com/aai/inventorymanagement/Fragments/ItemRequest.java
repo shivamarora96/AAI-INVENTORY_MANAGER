@@ -1,7 +1,8 @@
 package com.aai.inventorymanagement.Fragments;
 
-
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,25 +27,26 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Update extends Fragment {
+
+public class ItemRequest extends Fragment {
+
 
     ListView listView ;
     ListviewcustomAdapter adapter;
 
 
-    public Update() {
 
+    public ItemRequest() {
+        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_update, container, false);
+
+        return inflater.inflate(R.layout.fragment_item_request, container, false);
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -62,8 +64,8 @@ public class Update extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Item>> call, Response<ArrayList<Item>> response) {
                 Log.i("tag", "Success");
-                listView = (ListView)currentView.findViewById(R.id.update_lv);
-                adapter = new ListviewcustomAdapter(getActivity() , Constants.ACTION_UPDATE, response.body());
+                listView = (ListView)currentView.findViewById(R.id.itemRequested_lv);
+                adapter = new ListviewcustomAdapter(getActivity() , Constants.ACTION_ITEMREQUEST, response.body());
                 listView.setAdapter(adapter);
 
 
@@ -90,6 +92,6 @@ public class Update extends Fragment {
 
 
     }
- }
 
 
+}

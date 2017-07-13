@@ -1,4 +1,4 @@
-package com.aai.inventorymanagement.Model;
+package com.aai.inventorymanagement.Model.Requests;
 
 import android.content.Context;
 import android.util.Log;

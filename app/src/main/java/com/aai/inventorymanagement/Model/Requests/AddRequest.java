@@ -1,4 +1,4 @@
-package com.aai.inventorymanagement.Model;
+package com.aai.inventorymanagement.Model.Requests;
 
 import com.aai.inventorymanagement.Others.Constants;
 

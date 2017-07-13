@@ -1,5 +1,7 @@
 package com.aai.inventorymanagement.Activities;
 
+import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,11 +17,12 @@ import com.aai.inventorymanagement.Fragments.AddNewItem;
 import com.aai.inventorymanagement.Fragments.DeleteItem;
 import com.aai.inventorymanagement.Fragments.Home;
 import com.aai.inventorymanagement.Fragments.ItemAllocated;
+import com.aai.inventorymanagement.Fragments.ItemRequest;
 import com.aai.inventorymanagement.Fragments.Update;
 import com.aai.inventorymanagement.Fragments.Vview;
-import com.aai.inventorymanagement.Model.AddRequest;
-import com.aai.inventorymanagement.Model.AddResponse;
-import com.aai.inventorymanagement.Model.Item;
+import com.aai.inventorymanagement.Model.Requests.AddRequest;
+import com.aai.inventorymanagement.Model.Response.AddResponse;
+import com.aai.inventorymanagement.Model.Requests.Item;
 import com.aai.inventorymanagement.Others.Constants;
 import com.aai.inventorymanagement.R;
 import com.aai.inventorymanagement.Utilities.AlertHelper;
@@ -57,31 +60,66 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner , Ad
         actionBarDrawerToggle.syncState();
 
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
         Home fragment = new Home();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if(item.getItemId() == R.id.menu1){
-                    //TODO SOMETHING
-                    mDrawerLayout.closeDrawer(GravityCompat.START , true);
+
+                if (item.getItemId() == R.id.menu_home){
+                    startActivity(new Intent(HomeActivity.this , HomeActivity.class));
+                    finish();
+
+                }
+                else if (item.getItemId() == R.id.menu_quit){
+                    finish();
+                    return true;
+                }
+                else if(item.getItemId() == R.id.menu_share){
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,
+                            "Hey check out my app at:".concat(" ".concat(Constants.APPLINK)));
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.menu_logout){
+
+                    Handler handler = new Handler();
+                    final AlertHelper loading = new AlertHelper();
+                    loading.createProgressAlert(HomeActivity.this , "PLEASE WAIT");
+                    loading.showAlert();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loading.hideAlert();
+                            SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager(HomeActivity.this);
+                            sharedPreferenceManager.setBoolean(Constants.LOGINTOKEN_KEY, Constants.USER_NOTLOGINED);
+                            startActivity(new Intent(HomeActivity.this , LoginActivity.class));
+                            finish();
+                        }
+                    },1500);
                     return true;
 
                 }
+
+                mDrawerLayout.closeDrawer(GravityCompat.START , true);
+
                 return false;
             }
         });
+
     }
 
     @Override
@@ -156,16 +194,30 @@ public class HomeActivity extends AppCompatActivity implements Home.Listner , Ad
         helper.hideAlert();
 
         if (v == 5){
-            ItemAllocated fragment = new ItemAllocated();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container, fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+
+            SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager(HomeActivity.this);
+            int status = sharedPreferenceManager.getInt(Constants.USERTYPE_KEY , Constants.USERTYPE_GENERAL);
+            if (status == Constants.USERTYPE_ADMIN){
+                Vview fragment = new Vview();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+            else {
+                ItemAllocated fragment = new ItemAllocated();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+
+
 
         }
 
         if (v == 6){
-            Vview fragment = new Vview();
+            ItemRequest fragment = new ItemRequest();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container, fragment);
             fragmentTransaction.addToBackStack(null);
